@@ -1,0 +1,13 @@
+my-dining
+*.o
+*.obj
+*.out
+
+#debugging and temporary files
+*.log
+*.tmp
+
+#editor and OS files
+.vscode/
+.DS_Store
+Thumbs.db
