@@ -1,8 +1,7 @@
 
-#include "peterson_lock.h"
+#include "peterson_lock.h" // petersonlcok class definition
 
 /*
-
 implements the two-participant Peterson lock.
   Used by-
   TournamentTreeLock
@@ -17,30 +16,25 @@ implements the two-participant Peterson lock.
 
 //implement and initialize Peterson's atomic state.
 
-PetersonLock::PetersonLock() {
-
-}
+PetersonLock::PetersonLock() = default; //constructor, atomic member is alr initialized in the header
 
 // implement Peterson's entry protocol.
-void PetersonLock::acquire(int participant) {
-    (void)participant;
+void PetersonLock::acquire(int participant) 
+{
+    int other = 1-participant; //determine the other participant
+    interest[participant].store(true); //announce this participant wants lock/ critical seciton
 
-    /*
-      Steps to implement:
-      Express this participant's intention to enter.
-      Set the contention tie-breaker correctly.
-      Wait while the other participant has priority.
-      Return once exclusive access is guaranteed.
-     */
+    turn.store(other); //give other participant priorty if they both compete
+
+    //wiat while the other partcipant want shte lock
+    //then turn currently favors the other participant
+    while(interest[other].load() && turn.load() == other){
+        //busy waiting, keep checking until entry is ready
+    }
 }
 
-//implement Peterson's release protocol.
-void PetersonLock::release(int participant) {
-    (void)participant;
-
-    /*
-      Update the appropriate shared atomic state
-      to announce that this participant has left
-      the critical section.
-     */
+//release the lock for participant 0 or 1
+void PetersonLock::release(int participant) 
+{
+    interest[participant].store(false); //announce this particment doesnt want lock
 }

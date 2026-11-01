@@ -1,6 +1,9 @@
 #pragma once
 
 #include "peterson_lock.h"
+#include <cstddef>
+#include <memory>
+
 
 /*
 purpose: declares an n-thread mutual exclusion lock built using 
@@ -10,7 +13,7 @@ used by
 tournamnet_tree_lock.cpp
 dining.cpp (course-grained solution)
 
--n must be >=2
+n must be >=2
 threadId must be between 0 and n-1
 aquire() locks the path from leaf to root
 release() unloskc the path from root ot leaf
@@ -19,24 +22,16 @@ release() unloskc the path from root ot leaf
 class TournamentTreeLock 
 {
 public:
-    explicit TournamentTreeLock(int n);
+    explicit TournamentTreeLock(int n); //constructor, creasts a Tournament Tree for n threads
 
-    //threadId is in the range 0 through n-1.
-    void acquire(int threadId);
-    void release(int threadId);
+    void acquire(int threadId); //aquire locsk from threads leaf toward root
+    void release(int threadId); //release locks form root toward threads leaf
 
 private:
-    /*
-    declare the interal tree representation
+    int nThread; //number of actual partiicpating threads
+    std::size_t capacity; //number of leaf positions, rounded to power of 2
 
-    consider
-    number of participating thread
-    leaf capacity
-    colleciton of peterson nodes
-    mapping form thread IDs to leaf positions
-
-    the strcutures must support n values that are not powers of two
-
-    remember atomic consiting petersonLock objects should not be assumed ot be copyable
-    */
+    //arry of peterson locsk used as internal tree nodes
+    //index 0 is unused because th etree root is index 1
+    std::unique_ptr<PetersonLock[]> nodes; 
 };
