@@ -80,5 +80,14 @@ So it allows non neighboring philosophers to eat simultaneously while preventing
 
 
 ## Assumptions
+- The number of philosophers is at least 2
+- Philosopher IDs range form 0 to n-1
+- Each philosopher uses its own unique thread ID when acuqiring the Tournament tree lock
+- Peterson lock participant IDs are local to each lock and ar either 0 or 1
+- Program is C++17 standard and POSIX thread support
 
 ## Limitations
+- Peterson and Tournamnet-Tree locks use busy waiitng, so it might consume CPU time during contention
+- The synchroniziaiotn alogirhtm doesnt guarantee stravation freedom under every possible thread schedule
+- The max practical number of philosopher threads depends on avaialbe system memory and operating system resoruces
+- REqurie environemnt supporting C++17 and POSIX thread
