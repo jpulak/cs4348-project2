@@ -1,12 +1,13 @@
 
 #include "dining.h"
 
-#include <iostream>
-#include <string>
-#include <exception>
+#include <iostream> //std::cout and cerr
+#include <string>// std:;string and stoll
+#include <stdexcept> //exception class
+#include <limits>//numeric limits for int
+#include<exception>//std::exception
 
 /*
-
 program entry point and execution coordinator.
 
 Uses:
@@ -29,28 +30,58 @@ Return nonzero on failure.
 
 int main(int argc, char* argv[]) 
 {
-    // Check the number of command-line arguments.
+    //recive on argument, n, argc include executable name so 2
+    if (argc!=2){
+        std::cerr <<"error, format argument as ./my-dining n(n>=2)\n";
+        return 1;//program failed
+    }
 
-    // Convert argv[1] to an integer.
+    int n;//storesvalidaded nubmer of philosphers
 
-    // Reject non-integers, n < 2, and invalid values.
+    try{
+        //stor arg as string for validaiton
+        std::string input = argv[1];
 
-    // Call runCoarse(n) and runFine(n) in order.
+        //reject empty arg
+        if(input.empty()){
+            throw std::invalid_argument ("n can't be empty");
+        }
 
-    //Required order once validation is complete:
+        //reject any chars other than decimal digits
+        for (char c:input){
+            if(c<'0'|| c>'9'){
+                throw std::invalid_argument("n has to be an integer");
+            }
+        }
 
-    //BEGIN COARSE
-    //runCoarse(n)
-    //END COARSE
+        long long value= std::stoll(input); //convert validated string to wide int type
 
-    //BEGIN FINE
-    //runFine(n)
-    //END FINE
+        //need at least two philosophers
+        if(value<2){
+            throw std::invalid_argument("n has to be at least 2");
+        }
 
-    (void)argc;
-    (void)argv;
+        //number fit in the int parameter type
+        if(value >std::numeric_limits<int>::max()){
+            throw std::out_of_range("n is too big");
+        }
 
-    std::cerr << "Project implementation not complete.\n";
+        n= static_cast<int>(value); //convert after validating
 
-    return 1;
+        std::cout<<"BEGIN COARSE\n"; //begin course grained solution
+        runCoarse(n); //returns after joining all course threads
+        std::cout <<"END COARSE\n"; //mark completion of course grained solution
+
+        std::cout<<"BEGIN FINE\n";//beign fine grained solution
+        runFine(n); // return after joining all fine threads
+        std::cout<<"END FINE\n"; //complete of fine grained solution
+    }
+
+    catch(const std::exception& error) {
+        //handle conversion, allocaiton, perrors 
+        std::cerr<<"Error message: "<< error.what() <<"\n";
+
+        return 1; //failed
+    }
 }
+
